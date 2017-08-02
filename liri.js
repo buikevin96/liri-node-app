@@ -73,5 +73,35 @@ function spotifyThisSong() {
 }
 
 function movieThis() {
+
+	var movieName = title;
+
+		// for (var i = 2; i < title.length; i++) {
+		// 	if (i > 2 && i < title.length) {
+		// 		movieName = movieName + "+" + title;				
+		// 	} else {
+		// 		movieName += title;
+		// 	}
+		// } 
+
+	var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=40e9cece";
+	console.log(queryUrl);
+
+	request(queryUrl, function(error, response, body) {
+
+		// If the request is successful
+		if (!error && response.statusCode === 200) {
+
+			// Parse the body of the site
+			console.log("Title: " + JSON.parse(body).Title);
+			console.log("Release Year: " + JSON.parse(body).Released);
+			console.log("IMDB Rating: " + JSON.parse(body).Ratings[0].Value);
+			console.log("Rotten Tomatoes Rating: " + JSON.parse(body).Ratings[1].Value);
+			console.log("Country Produced: " + JSON.parse(body).Country);
+			console.log("Plot: " + JSON.parse(body).Plot);
+			console.log("Actors: " + JSON.parse(body).Actors);
+		}
+	});
+
 	
 }
