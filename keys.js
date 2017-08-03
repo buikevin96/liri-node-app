@@ -1,6 +1,5 @@
 console.log('this is loaded');
 
-// Should I remove the < > from the key?
 exports.twitterKeys = {
   consumer_key: 'uktQccsXTeLlYh1fB1YGkcHVi',
   consumer_secret: 'nqm7RjRGHkQlFPSrPcf8eFnqpgofj3BIYBuZiUfEyQJjWXE4XT',

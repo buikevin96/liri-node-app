@@ -22,9 +22,8 @@ switch (command) {
 		break;
 }
 
-// How come it is not grabbing anything?
 function myTweets() {
-	// Do we place the keys in here or grab them from keys.js?
+
 	var client = new Twitter({
 		consumer_key: 'uktQccsXTeLlYh1fB1YGkcHVi',
  		consumer_secret: 'nqm7RjRGHkQlFPSrPcf8eFnqpgofj3BIYBuZiUfEyQJjWXE4XT',
@@ -50,32 +49,44 @@ function myTweets() {
 
 }
 
-
 function spotifyThisSong() {
 
 	var spotify = new Spotify({
   		id: '62a4726d460d43089c7c2017c10ef3b1',
 		secret: '7336815a72404ddfb26d35a6d0fe2a81'
 	});
- 
- 	// https://api.spotify.com/v1/search?query=All+the+Small+Things&type=track&offset=0&limit=20
- 	// Error no token provided
- 	// How do you retrieve requested song information
-	spotify
- 		.search({ type: 'track', query: title })
+
+	if (title === null) {
+		spotify
+ 		.search({ type: 'track', query: 'The Sign' })
  		.then(function(response) {
-    		console.log(response.tracks.items[0]);
+    		
     		console.log("Artist(s): " + response.tracks.items[0].artists[0].name);
     		console.log("Song Name: " + response.tracks.items[0].name);
     		console.log("Preview link: " + response.tracks.items[0].preview_url);
-    		//console.log("Album: " + response.tracks.items[0].album[0].name);
-  })
+    		console.log("Album: " + response.tracks.items[0].album.name);
+ 	})
   		.catch(function(err) {
     		console.log(err);
+
  	 });
 
-  	// How do you default to a song?
+	} else {
+		spotify
+	 		.search({ type: 'track', query: title })
+	 		.then(function(response) {
+	    		
+	    		console.log("Artist(s): " + response.tracks.items[0].artists[0].name);
+	    		console.log("Song Name: " + response.tracks.items[0].name);
+	    		console.log("Preview link: " + response.tracks.items[0].preview_url);
+	    		console.log("Album: " + response.tracks.items[0].album.name);
+	 	})
+	  		.catch(function(err) {
+	    		console.log(err);
 
+	 	 });
+	  }
+  	// How do you default to a song?
 }
 
 function movieThis() {
@@ -105,8 +116,6 @@ function movieThis() {
 
 function doWhatItSays() {
 
-	// How do i make this run the spotifyThisSong function?
-
 	// Running the readFile module that's inside of fs.
 	// Stores the read information into variable "data"
 	fs.readFile("random.txt", "utf8", function(err, data) {
@@ -120,13 +129,21 @@ function doWhatItSays() {
 		// Loop through the newly created output array
 		for (var i = 0; i < output.length; i++) {
 
-			// Print each element (item) of the array
-			var command = process.argv[2]; // The action the user wants to perform
-			var title = process.argv[3]; // The song or movie name that the user would like to search
+			var command = output[0]; // The action the user wants to perform
+			var title = output[1]; // The song or movie name that the user would like to search
 
 			switch (command) {
 				case "my-tweets":
 					myTweets(); // will perform myTweets function
+				break;
+				case "spotify-this-song":
+	 				spotifyThisSong(); // Will perform spotifyThisSong function
+	 			break;
+				case "movie-this":
+					movieThis(); // Will perform movieThis function
+				break;
+				case "do-what-it-says":
+					doWhatItSays(); // Will perform doWhatItSays function
 				break;
 			}
 		}
