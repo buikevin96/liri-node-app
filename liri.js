@@ -1,7 +1,8 @@
-// Is this where we place these?
+// Is this where we place these or within the function that it belongs?
 var request = require('request');
 var Twitter = require('twitter');
 var Spotify = require('node-spotify-api');
+var fs = require("fs");
 
 var command = process.argv[2]; // The action the user wants to perform
 var title = process.argv[3]; // The song or movie name that the user would like to search
@@ -35,13 +36,18 @@ function myTweets() {
 
 	client.get('statuses/user_timeline', params, function(error, tweets, response){
 		if (!error) {
-			console.log(tweets); // This grabs a bunch of data, how do I grab just the last 20 tweets and when they were created?
-			//console.log("Tweet: " + tweets.text);
-			//console.log("Created At: " + tweets.created_at);
-		} else {
-			console.log(error);
+
+			var last20 = tweets.slice(tweets.length - 20);
+
+			for (var i = 0; i < last20.length; i++) {
+				console.log("Tweet: " + last20[i].text); // This grabs a bunch of data, how do I grab just the last 20 tweets and when they were created
+				console.log("Created At: " + last20[i].created_at);
+				}
+			} else {
+				console.log(error);
 		}
 	});		
+
 }
 
 
@@ -56,13 +62,13 @@ function spotifyThisSong() {
  	// Error no token provided
  	// How do you retrieve requested song information
 	spotify
- 		.search({ type: 'track', query: 'All the Small Things' })
+ 		.search({ type: 'track', query: title })
  		.then(function(response) {
-    		console.log(response);
-    		console.log("Artist(s): ");
-    		console.log("Song Name: ");
-    		console.log("Preview link: ");
-    		console.log("Album: ");
+    		console.log(response.tracks.items[0]);
+    		console.log("Artist(s): " + response.tracks.items[0].artists[0].name);
+    		console.log("Song Name: " + response.tracks.items[0].name);
+    		console.log("Preview link: " + response.tracks.items[0].preview_url);
+    		//console.log("Album: " + response.tracks.items[0].album[0].name);
   })
   		.catch(function(err) {
     		console.log(err);
@@ -75,14 +81,6 @@ function spotifyThisSong() {
 function movieThis() {
 
 	var movieName = title;
-
-		// for (var i = 2; i < title.length; i++) {
-		// 	if (i > 2 && i < title.length) {
-		// 		movieName = movieName + "+" + title;				
-		// 	} else {
-		// 		movieName += title;
-		// 	}
-		// } 
 
 	var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=40e9cece";
 	console.log(queryUrl);
@@ -103,5 +101,34 @@ function movieThis() {
 		}
 	});
 
-	
+}
+
+function doWhatItSays() {
+
+	// How do i make this run the spotifyThisSong function?
+
+	// Running the readFile module that's inside of fs.
+	// Stores the read information into variable "data"
+	fs.readFile("random.txt", "utf8", function(err, data) {
+		if (err) {
+			return console.log(err);
+		}
+
+		// Break the string down by comma separation and store the contents into the output array
+		var output = data.split(",");
+
+		// Loop through the newly created output array
+		for (var i = 0; i < output.length; i++) {
+
+			// Print each element (item) of the array
+			var command = process.argv[2]; // The action the user wants to perform
+			var title = process.argv[3]; // The song or movie name that the user would like to search
+
+			switch (command) {
+				case "my-tweets":
+					myTweets(); // will perform myTweets function
+				break;
+			}
+		}
+	});
 }
