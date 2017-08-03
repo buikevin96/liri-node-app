@@ -56,9 +56,12 @@ function spotifyThisSong() {
 		secret: '7336815a72404ddfb26d35a6d0fe2a81'
 	});
 
-	if (title === null) {
+	if (!title) {
+
+		title = 'The Sign Ace of Base';
+
 		spotify
- 		.search({ type: 'track', query: 'The Sign' })
+ 		.search({ type: 'track', query: title })
  		.then(function(response) {
     		
     		console.log("Artist(s): " + response.tracks.items[0].artists[0].name);
@@ -86,15 +89,41 @@ function spotifyThisSong() {
 
 	 	 });
 	  }
-  	// How do you default to a song?
 }
 
 function movieThis() {
 
 	var movieName = title;
 
-	var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=40e9cece";
-	console.log(queryUrl);
+	if (!movieName) {
+
+		movieName = "Mr. Nobody";	
+		var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=40e9cece";
+
+	
+	//console.log(queryUrl);
+
+		request(queryUrl, function(error, response, body) {
+
+		// If the request is successful
+		if (!error && response.statusCode === 200) {
+
+			// Parse the body of the site
+			console.log("If you haven't watched \"Mr. Nobody,\" then you should: http://www.imdb.com/title/tt0485947/");
+			console.log("It's on Netflix!");
+			console.log("Title: " + JSON.parse(body).Title);
+			console.log("Release Year: " + JSON.parse(body).Released);
+			console.log("IMDB Rating: " + JSON.parse(body).Ratings[0].Value);
+			console.log("Rotten Tomatoes Rating: " + JSON.parse(body).Ratings[1].Value);
+			console.log("Country Produced: " + JSON.parse(body).Country);
+			console.log("Plot: " + JSON.parse(body).Plot);
+			console.log("Actors: " + JSON.parse(body).Actors);
+		}
+	});
+	
+	} else {
+
+	var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=40e9cece";	
 
 	request(queryUrl, function(error, response, body) {
 
@@ -109,9 +138,9 @@ function movieThis() {
 			console.log("Country Produced: " + JSON.parse(body).Country);
 			console.log("Plot: " + JSON.parse(body).Plot);
 			console.log("Actors: " + JSON.parse(body).Actors);
-		}
-	});
-
+			}
+		});
+	}
 }
 
 function doWhatItSays() {
@@ -129,23 +158,22 @@ function doWhatItSays() {
 		// Loop through the newly created output array
 		for (var i = 0; i < output.length; i++) {
 
-			var command = output[0]; // The action the user wants to perform
-			var title = output[1]; // The song or movie name that the user would like to search
+		 	command = output[0]; // The action the user wants to perform
+			title = output[1]; // The song or movie name that the user would like to search
 
 			switch (command) {
 				case "my-tweets":
 					myTweets(); // will perform myTweets function
 				break;
 				case "spotify-this-song":
-	 				spotifyThisSong(); // Will perform spotifyThisSong function
+	 				spotifyThisSong(title); // Will perform spotifyThisSong function
 	 			break;
 				case "movie-this":
 					movieThis(); // Will perform movieThis function
 				break;
-				case "do-what-it-says":
-					doWhatItSays(); // Will perform doWhatItSays function
-				break;
 			}
 		}
 	});
+
 }
+
